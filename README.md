@@ -1,1 +1,7 @@
 # nba_beating_the_spread
+
+For this project, I wanted to create a model to determine which bets to place on NBA games in order to maximize winnings.  My basic approach for this task was to fist create a regression model to predict the point spread of a given NBA game based on historic boxscore statistics for each team and then compare that predicted point spread against the betting spreads to determine which team to bet on.
+
+I began by pulling historic NBA boxscore data via the NBA.com API as well as historic betting spreads and moneylines from www.sportsbookreview.com.  The collected data spanned from the 2000-01 season through the 2021-22 season.  The majority of the data scraping code was provided by https://github.com/jnish23 who worked on a similar project.  The data collection process took several days as frequent sleep statements had to be inserted into the code to avoid timeout errors.  
+
+After consolidating the collected data, the dataset consisted of 56,304 rows and 50 columns.  From here, the data exploration and feature engineering portion of the project began.  This started with checking for features with missing values of which there were only 3 (offensive rebound percentage, defensive rebound percentage, and rebound percentage).  Since each of these statistics is computed using each teams respective rebound statistics, which were available, I was able to replicate these missing statistics manually.
