@@ -16,6 +16,6 @@ After the data prep and feature engineering were completed, I quickly checked th
 
 As a final step in the data preparation, I wanted to conduct some dimensionality reduction through PCA in order to minimize multicollinearity concerns.  To begin, I plotted the cumulative explained variance and explained variance as a function of the number of principal components:
 
-![Alt text](https://raw.githubusercontent.com/jnshzk/nba_beating_the_spread/images/pca_cum_exp_var_plot.png?raw=true)
+![Alt text](https://raw.githubusercontent.com/jnshzk/nba_beating_the_spread/main/images/pca_cum_exp_var_plot.png?raw=true)
 
-![Alt text](https://raw.githubusercontent.com/jnshzk/nba_beating_the_spread/images/pca_scree_plot.png?raw=true)
+![Alt text](https://raw.githubusercontent.com/jnshzk/nba_beating_the_spread/main/images/pca_scree_plot.png?raw=true)
