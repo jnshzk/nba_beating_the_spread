@@ -15,7 +15,7 @@ I also added a couple of engineered features including number of rest days and E
 After the data prep and feature engineering were completed, I quickly checked the distributions of my final dataset to make sure there were no anomolies in the data.  At this stage, the dataset consisted of 27,363 rows and 52 columns.
 
 As a final step in the data preparation, I wanted to conduct some dimensionality reduction through PCA in order to minimize multicollinearity concerns.  To begin, I plotted the cumulative explained variance and explained variance as a function of the number of principal components:
+https://raw.githubusercontent.com/<username>/<repo name>/<branch>/<path to file>
+![pca cumulative explained variance](/images/pca_cum_exp_var_plot.png?raw=true)
 
-![pca cumulative explained variance](https://raw.githubusercontent.com/jnshzk/nba_beating_the_spread/master/images/pca_cum_exp_var_plot.png?raw=true)
-
-![pca scree plot](https://raw.githubusercontent.com/jnshzk/nba_beating_the_spread/master/images/pca_scree_plot.png?raw=true)
+![pca scree plot](/images/pca_scree_plot.png?raw=true)
