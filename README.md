@@ -9,7 +9,7 @@ I began by pulling historic NBA boxscore data via the NBA.com API as well as his
 ## Data Pre-processing
 After consolidating the collected data, the dataset consisted of 56,304 rows and 50 columns.  From here, the data exploration and feature engineering portion of the project began.  This started with checking for features with missing values of which there were only 3 (offensive rebound percentage, defensive rebound percentage, and rebound percentage).  Since each of these percentages is computed using rebound statistics, which were available, I was able to replicate these missing values manually.  After imputing the missing values, I did some simple data preparation (e.g. computed the point spread for each game, converted the Win/Loss column to 1's and 0's, reformtted the data so each game was represented by a single row instead of a row for each team etc.).
 
-**Feature Engineering**
+***Feature Engineering***
 
 Next, I experimented with different methods of representing the data for each game.  Since I obviously would not have the actual statistics of a game prior to placing bets on the game, I knew I would have to represent each team as some sort of average of their past performance. After experimenting with different representations (simple moving average, weighted average, etc.), I settled on taking an exponentially weighted moving average of each team's statistics over their last 50 games.  This average gave a higher weight to each team's most recent performance.  Additionally, in order to minimize the number of columns, I took the difference between the home and away teams' statistics (so if the home team was averaging 5 more points per game than the away team, there would be a single 'points' feature whose value would be 5).
 
@@ -17,7 +17,7 @@ I also added a couple of engineered features including number of rest days and E
 
 Next, I quickly checked the distributions of my dataset to make sure there were no anomolies in the data.  At this stage, the dataset consisted of 27,363 rows and 52 columns.
 
-**Principal Component Analysis**
+***Principal Component Analysis***
 
 As a final step in the data preparation, I wanted to conduct dimensionality reduction through PCA in order to minimize multicollinearity concerns.  Many of the features in my dataset seemed likely to be highly correalted (e.g. rebounds, defensive rebounds, offensive rebounds, rebound percentage, etc.), so dimensionnality reduction seemed to be a logical next step.  To begin, I plotted the explained variance as a function of the number of principal components:
 
@@ -45,7 +45,7 @@ Initially, none of my models were profitable when evaluated on the test seasons.
 
 Surprisingly, a simple linear regression combined with a high confidence threshold saw very strong performance, and a polynomial regression (with degree=2) saw the highest ROI out of all tested models.  However, since both linear and polynomial regression offer very few options when it comes to hyperparameter tuning, I concentrating my tuning efforts on the XGBoost model which also recorded a strong ROI.
 
-**Model Tuning and Final Results**
+***Model Tuning and Final Results***
 
 In order to tune my XGBoost model, I used the hyperopt library.  This method of hyperparameter tuning uses a form of Bayesian optimization.  We first defined a hyperparameter space as well as an objective function, which in this case was the coefficient of determinateion (R-squared) of the model.  Hyperopt then generates a random initial point in the parameter space and evaluates the value of the objective function at this point.  Using results from this trial and past trials, hyperopt will then attempt to build a conditional probability model to determine another point in the parameter space that will likely yeild a better result.  This process is repeated until the stop criteria (in this case number of iterations=100) is satisfied.  After tuning my XGBoost model, I obtained the following results:
 
