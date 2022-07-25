@@ -29,4 +29,10 @@ For the model implementation portion of this project, I experimented with severa
 
 Initially, none of my models were profitable when evaluated on the test seasons.  This led to some of the feature engineering described in the previous section (adding features, weighting average statistics, representing the data as the difference between each team's statistics, etc.).  However, even after experimenting with these adjustments, I still struggled to create a model that would generate a profit.  I finally tried implementing a confidence threshold for my betting.  This confidence threshold would only allow bets when there was a large enough difference between the model's predicted spread and the betting spread.  After some trial and error, I eventually settled on a confidence threshold of 20.  This means that I would only place bets on games where there was at least a 20 point discrepancy beetween the predicted spread and the betting spread.  This is obviously a high threshold with only 1-2% of all possible bets meeting this criteria.  However, with this threshold, my models saw a dramatic improvement in profitability.  Results at this stage are shown below:
 
-
+| Model | Win Percentage | Percent of Bets Placed | Profit | ROI |
+|.      |.               |                        |.       |.    |
+| Linear Regression | 61.6% | 1.2% | 127.25 | 324% |
+| Polynomial Regression (degree=2) | 61.1% | 1.5% | 137.22 | 357% |
+| KNN | 51.4% | 3.5% | -77.87 | -157% |
+| Random Forest | 57.7% | 1.3% | 76.98 | 6% |
+| XGBoost | 57.7% | 2.1% | 125.31 | 330% |
