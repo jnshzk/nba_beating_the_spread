@@ -44,6 +44,6 @@ Surprisingly, a simple linear regression combined with a high confidence thresho
 In order to tune my XGBoost model, I used the hyperopt library.  This method of hyperparameter tuning uses a form of Bayesian optimization.  We first have to define a hyperparameter space as well as an objective function, which in this case was COD of the model.  Hyperopt then, generates a random initial point in the parameter space and evaluates the value of the objective function at this point.  Using results from this trial and past trials, hyperopt will then attempt to build a conditional probability model to determine another point in the parameter space that will yeild a better result.  This process is repeated until the stop criteria (in this case number of iterations=100) is satisfied.  After tuning my XGBoost model, I obtained the following results:
 
 
-<img src="https://github.com/jnshzk/nba_beating_the_spread/images/xgboost_tuned_results.png" width="100">
+<img src="/images/xgboost_tuned_results.png" width="100">
 
 Here, we can see that I was able to beat the ROI scores of the polynomial regression model and generate a nearly 4x ROI over the course of the last 5 NBA seasons.
