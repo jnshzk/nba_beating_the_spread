@@ -17,7 +17,7 @@ I also added a couple of engineered features including number of rest days and E
 
 Next, I quickly checked the distributions of my dataset to make sure there were no anomolies in the data.  At this stage, the dataset consisted of 27,363 rows and 52 columns.
 
-###Principal Component Analysis
+### Principal Component Analysis
 
 As a final step in the data preparation, I wanted to conduct dimensionality reduction through PCA in order to minimize multicollinearity concerns.  Many of the features in my dataset seemed likely to be highly correalted (e.g. rebounds, defensive rebounds, offensive rebounds, rebound percentage, etc.), so dimensionnality reduction seemed to be a logical next step.  To begin, I plotted the explained variance as a function of the number of principal components:
 
