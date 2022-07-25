@@ -46,4 +46,4 @@ In order to tune my XGBoost model, I used the hyperopt library.  This method of 
 
 <img src="/images/xgboost_tuned_results.png" width="500">
 
-Here, we can see that I was able to beat the ROI scores of the polynomial regression model and generate a nearly 4x ROI over the course of the last 5 NBA seasons.
+Here, we can see that I was able to beat the ROI scores of the polynomial regression model and generate a nearly 4x ROI over the course of the last 5 NBA seasons.  There is still a fair amount of fluctuation in winnings due to the inherent unpredictability of NBA games, but there is a clear and consistent upward trend in simulated bankroll.  Additionally, we can see that there are stretches that can last a couple weeks, where no bets meet the confidence threshold criteria for bet placing.
