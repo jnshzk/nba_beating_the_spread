@@ -43,7 +43,7 @@ Initially, none of my models were profitable when evaluated on the test seasons.
 | Random Forest | 57.7% | 1.3% | 76.98 | 6% |
 | XGBoost | 57.7% | 2.1% | 125.31 | 330% |
 
-Surprisingly, a simple linear regression combined with a high confidence threshold saw very strong performance, and a polynomial regression (with degree=2) saw the highest ROI out of all tested models.  However, since both linear and polynomial regression offer very few options when it comes to hyperparameter tuning, I concentrating my tuning efforts on the XGBoost model which also recorded a strong ROI.
+Surprisingly, a simple linear regression combined with a high confidence threshold saw very strong performance, and a polynomial regression (with degree=2) saw the highest ROI out of all tested models.  However, since both linear and polynomial regression offer very few options when it comes to hyperparameter tuning, I concentrated my tuning efforts on the XGBoost model which also recorded a strong ROI.
 
 ***Model Tuning and Final Results***
 
