@@ -19,7 +19,7 @@ Next, I quickly checked the distributions of my dataset to make sure there were 
 
 ***Principal Component Analysis***
 
-As a final step in the data preparation, I wanted to conduct dimensionality reduction through PCA in order to minimize multicollinearity concerns.  Many of the features in my dataset seemed likely to be highly correalted (e.g. rebounds, defensive rebounds, offensive rebounds, rebound percentage, etc.), so dimensionnality reduction seemed to be a logical next step.  To begin, I plotted the explained variance as a function of the number of principal components:
+As a final step in the data preparation, I wanted to conduct dimensionality reduction through PCA in order to minimize multicollinearity concerns.  Many of the features in my dataset seemed likely to be highly correalted (e.g. rebounds, defensive rebounds, offensive rebounds, rebound percentage, etc.), so dimensionality reduction seemed to be a logical next step.  To begin, I plotted the explained variance as a function of the number of principal components:
 
 ![pca cumulative explained variance](/images/pca_cum_exp_var_plot.png?raw=true)
 
