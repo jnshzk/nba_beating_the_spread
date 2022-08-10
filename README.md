@@ -59,4 +59,4 @@ As a final step in this project, I wanted to productionalize the winning model. 
 
 ## Next Steps
 
-Probably the most obvious potential improvement to this model is the inclusion of player-level data.  The current iteration of this model only leverages team-level statistics.  Therefore, factors such as player injury, player rest, and player trades are not taken into account.  Team-level boxscore statistics and ELO ratings will eventually adapt to roster changes, but this can take several games.  Incorporating real-time roster changes could potentially lead to a significant improvement in performance.
+Probably the most apparent potential improvement to this model is the inclusion of player-level data.  The current iteration of this model only leverages team-level statistics.  Therefore, factors such as player injury, player rest, and player trades are not taken into account.  Team-level boxscore statistics and ELO ratings will eventually adapt to roster changes, but this can take several games.  Incorporating real-time roster changes could potentially lead to a significant improvement in performance.
