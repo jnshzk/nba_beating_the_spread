@@ -25,6 +25,9 @@ import sqlite3
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+from webdriver_manager.chrome import ChromeDriverManager
 
 options = Options()
 options.headless = True
@@ -115,7 +118,7 @@ def update_team_advanced_boxscores(conn, season, dates):
 #Define today's date (for testing setting date manually)
 start_time = datetime.datetime.now()
 
-test_mode = True
+test_mode = False
 
 if test_mode==True:
     date = date.today() - datetime.timedelta(days=122)
@@ -159,6 +162,19 @@ else:
     season = year-1
     
 con = sqlite3.connect('nba_refresh.db')
+
+######## TEMP DELETE IF NOT USING ANYMORE #############
+'''
+cur = con.cursor()
+cur.execute('DELETE FROM team_advanced_boxscores WHERE GAME_ID == \'0022200515\'')
+con.commit()
+
+cur = con.cursor()
+cur.execute('DELETE FROM team_advanced_boxscores WHERE GAME_ID == \'0022200516\'')
+con.commit()
+'''
+#######################################################
+
 update_team_basic_boxscores(con, season)
 try:
     game_ids_not_added, game_ids_added = update_team_advanced_boxscores(con, season, [])
@@ -172,6 +188,9 @@ except:
 #pull in full updated datasets
 team_basic_boxscores_df = pd.read_sql('select * from team_basic_boxscores', con)
 team_advanced_boxscores_df = pd.read_sql('select * from team_advanced_boxscores', con)
+
+######TEMP#######
+#print('team advanced boxscores: ', team_advanced_boxscores_df[team_advanced_boxscores_df['GAME_ID']=='0022200515'])
 
 team_boxscores_df = team_basic_boxscores_df.merge(team_advanced_boxscores_df, how='inner', on=['GAME_ID', 'TEAM_ID'])
 
@@ -193,6 +212,7 @@ oreb_pct_calc = np.empty(len(team_boxscores_df))
 dreb_pct_calc = np.empty(len(team_boxscores_df))
 reb_pct_calc = np.empty(len(team_boxscores_df))
 
+print('estimating missing rebound percentage stats...')
 for i, row in tqdm(team_boxscores_df.iterrows()):
     game_id = row['GAME_ID']
     team_id = row['TEAM_ID']
@@ -222,6 +242,7 @@ team_boxscores_df.drop(columns=['OREB_PCT_CALC',
 game_ids = team_boxscores_df['GAME_ID'].unique()
 spreads = np.empty(len(game_ids))
 
+print('storing actual point spreads for added games...')
 for i, game_id in tqdm(enumerate(game_ids)):
     spread = team_boxscores_df[(team_boxscores_df['GAME_ID']==game_id) &
                                (team_boxscores_df['HOME_TEAM']==True)]['PLUS_MINUS']
@@ -295,6 +316,7 @@ def add_elo_ratings(df):
     elo_dict = {}
     cur_season = df.iloc[0]['SEASON']
     
+    print('adding elo ratings...')
     for i, row in tqdm(df.iterrows()):
         
         if i%2 != 0:
@@ -358,6 +380,7 @@ feature_cols = set(team_boxscores_df.columns) - non_feature_cols
 
 weighted_avgs = []
 
+print('computing weighted moving average of stats for each game...')
 for i, row in tqdm(team_boxscores_df.iterrows()):
     team_id = row['TEAM_ID']
     game_date = row['GAME_DATE']
@@ -382,6 +405,7 @@ weighted_avg_df.reset_index(drop=True, inplace=True)
 #add number of rest days
 rest_days = np.empty(weighted_avg_df.shape[0])
 
+print('adding rest days...')
 for i, row in tqdm(weighted_avg_df.iterrows()):
     game_date = row['GAME_DATE']
     team_id = row['TEAM_ID']
@@ -408,7 +432,9 @@ missing_game_ids = []
 missing_game_count = 0
 
 feature_cols.add('ELO')
+feature_cols = list(feature_cols)
 
+print('reformatting each games data into single row...')
 for game_id in tqdm(game_ids):
     
     home_team_row = weighted_avg_df[(weighted_avg_df['GAME_ID']==game_id) &
@@ -458,6 +484,38 @@ final_df.to_csv('training_data.csv')
 
 #################### Pull betting spreads and moneylines for current day's games #####################
 
+#######REMOVE#########
+'''
+from nba_api.stats.static import players, teams
+from nba_api.stats.library.parameters import SeasonAll
+from nba_api.stats.endpoints import leaguegamelog
+from nba_api.stats.endpoints import boxscoreadvancedv2
+from nba_api.stats.endpoints import boxscorescoringv2
+
+import random
+import pandas as pd
+import numpy as np
+from tqdm import tqdm
+import time as time
+from time import sleep
+from datetime import date
+import datetime
+from IPython.core.display import clear_output
+import sqlite3
+
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+from webdriver_manager.chrome import ChromeDriverManager
+
+test_mode = False
+date = date.today()
+final_df = pd.read_csv('/Users/jinishizuka/nba_beating_the_spread/daily_refresh/training_data.csv')
+'''
+#######REMOVE#########
+
+
 #pull spreads and moneylines for the day
 def pull_spreads(date):
     
@@ -473,38 +531,54 @@ def pull_spreads(date):
     home_spreads = []
     
     web = 'https://www.sportsbookreview.com/betting-odds/nba-basketball/?date={}'.format(date)
-    path = '../../Downloads/chromedriver'
-    driver = webdriver.Chrome(path)
+    #path = '../../Downloads/chromedriver'
+    #path = '/Users/jinishizuka/Downloads/chromedriver'
+    #driver = webdriver.Chrome(path)
+    #driver.get(web)
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
     driver.get(web)
+    
     sleep(random.randint(1,2))
 
     try:
-        single_row_events = driver.find_elements_by_class_name('eventMarketGridContainer-3QipG')
+        #single_row_events = driver.find_elements_by_class_name('eventMarketGridContainer-3QipG')
+        #single_row_events = driver.find_elements(By.CLASS_NAME, 'eventMarketGridContainer-3QipG')
+        single_row_events = driver.find_elements(By.CLASS_NAME, 'GameRows_eventMarketGridContainer__GuplK')
 
     except:
         print("No Data for {}".format(date))
         dates_with_no_data.append(date)
 
-    num_postponed_events = len(driver.find_elements_by_class_name('eventStatus-3EHqw'))
+    #num_postponed_events = len(driver.find_elements_by_class_name('eventStatus-3EHqw'))
+    num_postponed_events = len(driver.find_elements(By.CLASS_NAME, 'eventStatus-3EHqw'))
 
     num_listed_events = len(single_row_events)
     cutoff = num_listed_events - num_postponed_events
+    
+    #print('single row events: ', single_row_events)
+    #print('num_listed_events: ', num_listed_events)
+    #print('cutoff: ', cutoff)
 
     for event in single_row_events[:cutoff]:
-
-        away_team = event.find_elements_by_class_name('participantBox-3ar9Y')[0].text
-        home_team = event.find_elements_by_class_name('participantBox-3ar9Y')[1].text
+        #away_team = event.find_elements_by_class_name('participantBox-3ar9Y')[0].text
+        #home_team = event.find_elements_by_class_name('participantBox-3ar9Y')[1].text
+        away_team = event.find_elements(By.CLASS_NAME, 'GameRows_participantBox__0WCRz')[0].text
+        home_team = event.find_elements(By.CLASS_NAME, 'GameRows_participantBox__0WCRz')[1].text
         away_teams.append(away_team)
         home_teams.append(home_team)
         gm_dates.append(date)
 
-        scoreboard = event.find_elements_by_class_name('scoreboard-1TXQV')
-
+        #scoreboard = event.find_elements_by_class_name('scoreboard-1TXQV')
+        scoreboard = event.find_elements(By.CLASS_NAME, 'scoreboard-1TXQV')
+        
+        #print('scoreboard: ', scoreboard)
+        
         home_score = []
         away_score = []
 
         for score in scoreboard:
-            quarters = score.find_elements_by_class_name('scoreboardColumn-2OtpR')
+            #quarters = score.find_elements_by_class_name('scoreboardColumn-2OtpR')
+            quarters = score.find_elements(By.CLASS_NAME, 'scoreboardColumn-2OtpR')
             for i in range(len(quarters)):
                 scores = quarters[i].text.split('\n')
                 away_score.append(scores[0])
@@ -523,7 +597,9 @@ def pull_spreads(date):
                 away_scoreboards.append('')
                 home_scoreboards.append('')
 
-        spreads = event.find_elements_by_class_name('pointer-2j4Dk')
+        #spreads = event.find_elements_by_class_name('pointer-2j4Dk')
+        spreads = event.find_elements(By.CLASS_NAME, 'OddsCells_pointer___xLMm')
+        
         away_lines = []
         home_lines = []
         for i in range(len(spreads)):    
@@ -556,8 +632,15 @@ def pull_spreads(date):
                       'HOME_SPREAD':home_spreads})
 
     df = df.sort_values(['GM_DATE']).reset_index(drop=True)
-
     
+    #print('game dates: ', gm_dates)
+    #print('away team: ', away_teams)
+    #print('home team: ', home_teams)
+    #print('away scoreboard: ', away_scoreboards)
+    #print('home scoreboard: ', home_scoreboards)
+    #print('away spread: ', away_spreads)
+    #print('home_spread: ', home_spreads)
+    #print('betting df head: ', df.head())
     return df
 
 #pull betting data
@@ -643,6 +726,9 @@ test_df.to_csv('eval_data.csv')
 ############################## Reformat spreads data ###########################
 
 spreads_df.drop(columns=['AWAY_SCOREBOARD', 'HOME_SCOREBOARD'], inplace=True)
+
+#REMOVE
+#print(spreads_df.head())
 
 spreads_df[['BOOK_1_AWAY', 'BOOK_2_AWAY', 'BOOK_3_AWAY', 'BOOK_4_AWAY', 'DISCARD_AWAY']] = spreads_df['AWAY_SPREAD'].str.split(pat=',', expand=True)
 spreads_df[['BOOK_1_HOME', 'BOOK_2_HOME', 'BOOK_3_HOME', 'BOOK_4_HOME', 'DISCARD_HOME']] = spreads_df['HOME_SPREAD'].str.split(pat=',', expand=True)
