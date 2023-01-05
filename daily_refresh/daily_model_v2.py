@@ -161,7 +161,7 @@ def eval_spreads(spreads, preds):
 bets = eval_spreads(spreads_df, y_pred)
 
 #dictionary defining book names
-book_dict = {0:'bet365', 1:'888sport', 2:'unibet', 3:'betway'}
+book_dict = {0:'Bet MGM', 1:'Draft Kings', 2:'Fanduel Sportsbook', 3:'Caesars Sportsbook'}
 
 #function to send email notifications
 username = 'jnshzk@gmail.com'
@@ -201,7 +201,7 @@ def send_notification(bets_df, recipients, confidence_thresh=20):
     msg['Subject'] = 'Bet Recommendations for {}'.format(date.today())
     msg['From'] = username
     
-    part1 = 'Hello,\n There are recommended bets available today ({}).  Please see details below:'.format(date.today())
+    part1 = 'Yo,\n Bet evaluations for today ({}) are shown below.\n  NOTE: The tested model only recommends placing bets where the spread difference is greater than 20, but evaluations for all games are shown for your convenience.'.format(date.today())
     msg.attach(MIMEText(part1))
     
     html = """\

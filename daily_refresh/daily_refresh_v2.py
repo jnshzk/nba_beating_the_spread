@@ -170,7 +170,15 @@ cur.execute('DELETE FROM team_advanced_boxscores WHERE GAME_ID == \'0022200515\'
 con.commit()
 
 cur = con.cursor()
+cur.execute('DELETE FROM team_basic_boxscores WHERE GAME_ID == \'0022200515\'')
+con.commit()
+
+cur = con.cursor()
 cur.execute('DELETE FROM team_advanced_boxscores WHERE GAME_ID == \'0022200516\'')
+con.commit()
+
+cur = con.cursor()
+cur.execute('DELETE FROM team_basic_boxscores WHERE GAME_ID == \'0022200516\'')
 con.commit()
 '''
 #######################################################
@@ -466,6 +474,10 @@ def check_missing_vals(df):
     for col in df.columns:
         if df[col].isna().sum() != 0:
             cols_w_missing_vals.append(col)
+    #print('cols with missing vals: ', cols_w_missing_vals)
+    #print('columns: ', df.columns)
+    #print('rows with missing vals: ', df[df['WL'].isna()])
+    #print(df.head())
     return cols_w_missing_vals
 
 #check for missing values
@@ -485,7 +497,7 @@ final_df.to_csv('training_data.csv')
 #################### Pull betting spreads and moneylines for current day's games #####################
 
 #######REMOVE#########
-'''
+
 from nba_api.stats.static import players, teams
 from nba_api.stats.library.parameters import SeasonAll
 from nba_api.stats.endpoints import leaguegamelog
@@ -512,7 +524,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 test_mode = False
 date = date.today()
 final_df = pd.read_csv('/Users/jinishizuka/nba_beating_the_spread/daily_refresh/training_data.csv')
-'''
+
 #######REMOVE#########
 
 
@@ -690,7 +702,7 @@ def create_model_input(home_team, away_team, game_date):
     away_row['REST_DAYS'] = game_date - away_row['GAME_DATE'].to_pydatetime().date()
 
     non_feature_cols.remove('ELO')
-    feature_cols = set(team_boxscores_df.columns) - non_feature_cols
+    feature_cols = list(set(team_boxscores_df.columns) - non_feature_cols)
     
     #compute difference between home team stats and away team stats
     output_row = home_row[feature_cols].subtract(np.array(away_row[feature_cols]))
@@ -730,8 +742,8 @@ spreads_df.drop(columns=['AWAY_SCOREBOARD', 'HOME_SCOREBOARD'], inplace=True)
 #REMOVE
 #print(spreads_df.head())
 
-spreads_df[['BOOK_1_AWAY', 'BOOK_2_AWAY', 'BOOK_3_AWAY', 'BOOK_4_AWAY', 'DISCARD_AWAY']] = spreads_df['AWAY_SPREAD'].str.split(pat=',', expand=True)
-spreads_df[['BOOK_1_HOME', 'BOOK_2_HOME', 'BOOK_3_HOME', 'BOOK_4_HOME', 'DISCARD_HOME']] = spreads_df['HOME_SPREAD'].str.split(pat=',', expand=True)
+spreads_df[['BOOK_1_AWAY', 'BOOK_2_AWAY', 'BOOK_3_AWAY', 'BOOK_4_AWAY', 'DISCARD_AWAY']] = spreads_df['AWAY_SPREAD'].str.split(pat=',', expand=True, n=4)
+spreads_df[['BOOK_1_HOME', 'BOOK_2_HOME', 'BOOK_3_HOME', 'BOOK_4_HOME', 'DISCARD_HOME']] = spreads_df['HOME_SPREAD'].str.split(pat=',', expand=True, n=4)
 
 
 spreads_df.drop(columns=['AWAY_SPREAD', 'HOME_SPREAD','DISCARD_AWAY','DISCARD_HOME'], inplace=True)
