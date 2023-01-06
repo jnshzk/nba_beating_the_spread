@@ -130,9 +130,11 @@ safetycheck_xgb.fit(safetycheck_X_train, safetycheck_y_train)
 
 test_score = safetycheck_xgb.score(safetycheck_X_test, safetycheck_y_test)
 
+#NOTE: Best R-squared obtained during original model tuning was 13.2
 print('R-squared score on last 5 seasons: ', test_score)
 
-###################################################################
+###############################################################
+
 print('Retraining model on full data...')
 
 #split data into X_train and y_train
