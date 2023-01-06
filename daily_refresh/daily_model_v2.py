@@ -196,13 +196,14 @@ def send_notification(bets_df, recipients, confidence_thresh=20):
     bets_df['RECOMMENDED_BET_ON'] = recommended_bet_on
     
     #create email notification
-    emaillist = [elem.strip().split(',') for elem in recipients]
-    msg = MIMEMultipart()
-    msg['Subject'] = 'Bet Recommendations for {}'.format(date.today())
+    #emaillist = [elem.strip().split(',') for elem in recipients]
+    msg = MIMEMultipart('mixed')
+    msg['Subject'] = 'NBA Bet Evaluations for {}'.format(date.today())
     msg['From'] = username
     
-    part1 = 'Yo,\n Bet evaluations for today ({}) are shown below.\n  NOTE: The tested model only recommends placing bets where the spread difference is greater than 20, but evaluations for all games are shown for your convenience.'.format(date.today())
-    msg.attach(MIMEText(part1))
+    text = 'Yo,\n Bet evaluations for today ({}) are shown below.\n  NOTE: The tested model only recommends placing bets where the spread difference is greater than 20, but evaluations for all games are shown for your convenience.'.format(date.today())
+    part1 = MIMEText(text, 'plain')
+    msg.attach(part1)
     
     html = """\
     <html>
@@ -222,11 +223,13 @@ def send_notification(bets_df, recipients, confidence_thresh=20):
     server.ehlo()
     #removed password for public repo
     server.login(username, password)
-    server.sendmail(msg['From'], emaillist, msg.as_string())
+    #server.sendmail(msg['From'], emaillist, msg.as_string())
+    server.sendmail(msg['From'], recipients, msg.as_string())
     server.quit()
 
 #send notifications
-send_notification(bets, [username])
+mailing_list = ['jnshzk@gmail.com', 'victoreyo15@gmail.com']
+send_notification(bets, mailing_list)
 
 print('Runtime: ', datetime.now() - start_time)
 
