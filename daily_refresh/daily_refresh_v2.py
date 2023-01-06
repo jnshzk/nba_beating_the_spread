@@ -772,6 +772,7 @@ spreads_df.drop_duplicates(inplace=True)
 
 spreads_df.to_csv('daily_spreads_df.csv')
 
+print('Complete')
 print('Runtime : ', datetime.datetime.now() - start_time)
 
 

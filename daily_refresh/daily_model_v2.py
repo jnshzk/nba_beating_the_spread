@@ -60,16 +60,17 @@ start_time = datetime.now()
 #import data
 training_df = pd.read_csv('training_data.csv')
 training_df.rename(columns={'HOME_TEAM_ID':'TEAM_ID_HOME', 'HOME_TEAM_CITY':'TEAM_CITY_HOME'}, inplace=True)
-print('Shape: ', training_df.shape)
+
+
+######### new code ##########
 
 #Create standardized dataset
 training_df.drop(columns=['Unnamed: 0',
                  'TEAM_ID_HOME',
                  'GAME_DATE',
-                 'TEAM_CITY_HOME',
-                 'SEASON'], inplace=True)
+                 'TEAM_CITY_HOME'], inplace=True)
 
-non_feature_cols = {'GAME_ID', 'SPREAD'}
+non_feature_cols = {'GAME_ID', 'SPREAD', 'SEASON'}
 feature_cols = set(training_df.columns) - non_feature_cols
 
 #standardize features
@@ -89,10 +90,54 @@ df_ids_spreads = training_df[list(non_feature_cols)].copy()
 df_pca = pd.DataFrame(pca.fit_transform(training_df[list(feature_cols)]))
 df_pca['GAME_ID'] = df_ids_spreads['GAME_ID']
 df_pca['SPREAD'] = df_ids_spreads['SPREAD']
+df_pca['SEASON'] = df_ids_spreads['SEASON']
+
+
+############### check model on performance over last 5 seasons #############
+
+print('Testing model on last 5 seasons...')
+
+def season_string(season):
+    return str(season) + '-' + str(season+1)[-2:]
+
+date = date.today()
+year = date.year
+month = date.month
+
+if month >= 9:
+    cur_season = year
+else:
+    cur_season = year-1
+
+test_seasons = []
+season = cur_season
+for _ in range(5):
+    season_str = season_string(season)
+    test_seasons.append(season_str)
+    season -= 1
+
+safetycheck_train_df = df_pca[~df_pca['SEASON'].isin(test_seasons)]
+safetycheck_test_df = df_pca[df_pca['SEASON'].isin(test_seasons)]
+
+safetycheck_y_train = safetycheck_train_df['SPREAD'].copy()
+safetycheck_X_train = safetycheck_train_df.drop(columns=['SPREAD', 'GAME_ID', 'SEASON'])
+
+safetycheck_y_test = safetycheck_test_df['SPREAD'].copy()
+safetycheck_X_test = safetycheck_test_df.drop(columns=['SPREAD', 'GAME_ID', 'SEASON'])
+
+safetycheck_xgb = pickle.load(open('model_latest.pkl', 'rb'))
+safetycheck_xgb.fit(safetycheck_X_train, safetycheck_y_train)
+
+test_score = safetycheck_xgb.score(safetycheck_X_test, safetycheck_y_test)
+
+print('R-squared score on last 5 seasons: ', test_score)
+
+###################################################################
+print('Retraining model on full data...')
 
 #split data into X_train and y_train
 y_train = df_pca['SPREAD'].copy()
-X_train = df_pca.drop(columns=['SPREAD', 'GAME_ID'])
+X_train = df_pca.drop(columns=['SPREAD', 'GAME_ID', 'SEASON'])
 
 #XGBoost implementation
 xgb = pickle.load(open('model_latest.pkl', 'rb'))
@@ -227,10 +272,12 @@ def send_notification(bets_df, recipients, confidence_thresh=20):
     server.sendmail(msg['From'], recipients, msg.as_string())
     server.quit()
 
+print('Sending notifications...')
 #send notifications
 mailing_list = ['jnshzk@gmail.com', 'victoreyo15@gmail.com']
 send_notification(bets, mailing_list)
 
+print('Complete')
 print('Runtime: ', datetime.now() - start_time)
 
 
