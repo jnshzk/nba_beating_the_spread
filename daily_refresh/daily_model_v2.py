@@ -39,6 +39,8 @@ from email.mime.text import MIMEText
 #convert fractional betting spread strings into floats
 
 def convert_to_float(frac_str):
+    if frac_str == 'PK':
+        return 0.0
     try:
         return float(frac_str)
     except ValueError:
