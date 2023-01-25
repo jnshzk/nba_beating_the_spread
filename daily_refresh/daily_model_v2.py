@@ -278,7 +278,7 @@ def send_notification(bets_df, recipients, confidence_thresh=20):
 
 print('Sending notifications...')
 #send notifications
-mailing_list = ['jnshzk@gmail.com', 'victoreyo15@gmail.com']
+mailing_list = ['jnshzk@gmail.com', 'victoreyo15@gmail.com', 'takahisa_ishizuka@yahoo.com ']
 send_notification(bets, mailing_list)
 
 print('Complete')
